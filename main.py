@@ -3,8 +3,8 @@ import csv
 import glob
 
 VERBOSE = False
-PERCENTAGE_CASES = False
-COUNTRIES = ["Mainland China"]
+PERCENTAGE_CASES = True
+COUNTRIES = ["Italy", "Mainland China"]
 
 if __name__ == "__main__":
     population = dict()
@@ -67,8 +67,10 @@ if __name__ == "__main__":
         deaths.append(deaths_)
         recovered.append(recovered_)
 
-    plt.plot(confirmed)
-    plt.plot(deaths)
-    plt.plot(recovered)
+    fig, ax = plt.subplots()
+    ax.plot(confirmed, label='confirmed')
+    ax.plot(deaths, label='deaths')
+    ax.plot(recovered, label='recovered')
+    ax.legend()
     plt.ylabel('percentage cases' if PERCENTAGE_CASES else 'total cases')
     plt.show()
