@@ -7,6 +7,14 @@ PERCENTAGE_CASES = True
 COUNTRIES = ["World"]
 
 if __name__ == "__main__":
+    if "China" in COUNTRIES and "Mainland China" not in COUNTRIES:
+        COUNTRIES.append("Mainland China")
+    elif "Mainland China" in COUNTRIES and "China" not in COUNTRIES:
+        COUNTRIES.append("China")
+
+    if "Russia" in COUNTRIES and "Russian Federation" not in COUNTRIES:
+        COUNTRIES.append("Russian Federation")
+
     population = dict()
     with open("population.csv", newline='\n') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -67,10 +75,13 @@ if __name__ == "__main__":
         deaths.append(deaths_)
         recovered.append(recovered_)
 
+    xaxis = list(dict_country_cases_time.keys())
+    xaxis.sort()
+
     fig, ax = plt.subplots()
-    ax.plot(list(dict_country_cases_time.keys()), confirmed, label='confirmed')
-    ax.plot(list(dict_country_cases_time.keys()), deaths, label='deaths')
-    ax.plot(list(dict_country_cases_time.keys()), recovered, label='recovered')
+    ax.plot(xaxis, confirmed, label='confirmed')
+    ax.plot(xaxis, deaths, label='deaths')
+    ax.plot(xaxis, recovered, label='recovered')
     ax.legend()
     plt.ylabel('percentage cases' if PERCENTAGE_CASES else 'total cases')
     plt.xticks(rotation=90)
