@@ -4,7 +4,7 @@ import glob
 
 VERBOSE = False
 PERCENTAGE_CASES = True
-COUNTRIES = ["Italy", "Mainland China"]
+COUNTRIES = ["World"]
 
 if __name__ == "__main__":
     population = dict()
@@ -59,18 +59,21 @@ if __name__ == "__main__":
             population_ = 0
             for country in COUNTRIES:
                 population_ += population[country]
-            confirmed_ = confirmed_ / population_
-            deaths_ = deaths_ / population_
-            recovered_ = recovered_ / population_
+            confirmed_ = confirmed_ / population_ * 100
+            deaths_ = deaths_ / population_ * 100
+            recovered_ = recovered_ / population_ * 100
 
         confirmed.append(confirmed_)
         deaths.append(deaths_)
         recovered.append(recovered_)
 
     fig, ax = plt.subplots()
-    ax.plot(confirmed, label='confirmed')
-    ax.plot(deaths, label='deaths')
-    ax.plot(recovered, label='recovered')
+    ax.plot(list(dict_country_cases_time.keys()), confirmed, label='confirmed')
+    ax.plot(list(dict_country_cases_time.keys()), deaths, label='deaths')
+    ax.plot(list(dict_country_cases_time.keys()), recovered, label='recovered')
     ax.legend()
     plt.ylabel('percentage cases' if PERCENTAGE_CASES else 'total cases')
+    plt.xticks(rotation=90)
+    for label in ax.xaxis.get_ticklabels()[::2]:
+        label.set_visible(False)
     plt.show()
