@@ -11,7 +11,7 @@ EXPORT = True
 def add_country_synonym(country1, country2):
     if country1 in COUNTRIES:
         COUNTRIES.add(country2)
-    elif country2 in COUNTRIES:
+    if country2 in COUNTRIES:
         COUNTRIES.add(country1)
 
 
@@ -118,6 +118,13 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
 def main():
     add_country_synonym("China", "Mainland China")
     add_country_synonym("Russia", "Russian Federation")
+    add_country_synonym("Taiwan", "Taiwan*")
+    add_country_synonym("Taiwan", "Taipei and environs")
+    add_country_synonym("Iran", "Iran (Islamic Republic of)")
+    add_country_synonym("South Korea", "Republic of Korea")
+    add_country_synonym("South Korea", "Korea, South")
+    add_country_synonym("China", "Hong Kong SAR")
+    add_country_synonym("China", "Hong Kong")
 
     dict_country_cases_time, population = get_data()
 
