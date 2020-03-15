@@ -74,6 +74,9 @@ def filter_data(dict_country_cases_time, population):
                 confirmed_ += dict_country_cases_time[time][country][0]
                 deaths_ += dict_country_cases_time[time][country][1]
                 recovered_ += dict_country_cases_time[time][country][2]
+
+        confirmed_ -= (deaths_ + recovered_)
+
         if PERCENTAGE_CASES:
             population_ = 0
             for country in COUNTRIES:
