@@ -49,7 +49,7 @@ def get_data():
         return dict_country_cases_time, population
 
 
-def filter(dict_country_cases_time, population):
+def filter_data(dict_country_cases_time, population):
     if VERBOSE:
         print("{:15s} - {:15s}: {:7s} {:7s} {:7s}\n".format("country", "time", "confirmed", "deaths", "recovered"))
 
@@ -118,7 +118,7 @@ def main():
 
     dict_country_cases_time, population = get_data()
 
-    confirmed, deaths, recovered = filter(dict_country_cases_time, population)
+    confirmed, deaths, recovered = filter_data(dict_country_cases_time, population)
 
     draw_graph(dict_country_cases_time, confirmed, deaths, recovered)
 
