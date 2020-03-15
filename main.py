@@ -2,19 +2,22 @@ import matplotlib.pyplot as plt
 import csv
 import glob
 
-VERBOSE = True
+VERBOSE = False
 PERCENTAGE_CASES = True
-COUNTRIES = ["World"]
+COUNTRIES = {"China"}
 EXPORT = False
 
-if __name__ == "__main__":
-    if "China" in COUNTRIES and "Mainland China" not in COUNTRIES:
-        COUNTRIES.append("Mainland China")
-    elif "Mainland China" in COUNTRIES and "China" not in COUNTRIES:
-        COUNTRIES.append("China")
 
-    if "Russia" in COUNTRIES and "Russian Federation" not in COUNTRIES:
-        COUNTRIES.append("Russian Federation")
+def add_country_synonym(country1, country2):
+    if country1 in COUNTRIES:
+        COUNTRIES.add(country2)
+    elif country2 in COUNTRIES:
+        COUNTRIES.add(country1)
+
+
+if __name__ == "__main__":
+    add_country_synonym("China", "Mainland China")
+    add_country_synonym("Russia", "Russian Federation")
 
     population = dict()
     with open("population.csv", newline='\n') as csvfile:
@@ -90,6 +93,7 @@ if __name__ == "__main__":
     ax.plot(xaxis, deaths, label='deaths')
     ax.plot(xaxis, recovered, label='recovered')
     ax.legend()
+    plt.title(" + ".join(COUNTRIES))
     plt.ylabel('percentage cases' if PERCENTAGE_CASES else 'total cases')
     plt.xticks(rotation=90)
     for label in ax.xaxis.get_ticklabels()[::2]:
