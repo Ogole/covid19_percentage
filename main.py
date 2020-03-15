@@ -2,10 +2,10 @@ import matplotlib.pyplot as plt
 import csv
 import glob
 
-VERBOSE = False
+VERBOSE = True
 PERCENTAGE_CASES = True
-COUNTRIES = set()
-EXPORT = False
+COUNTRIES = {"World"}
+EXPORT = True
 
 
 def add_country_synonym(country1, country2):
@@ -46,7 +46,7 @@ def get_data():
         date = file[-14:-4]
         dict_country_cases_time[date[6:] + "-" + date[:2] + "-" + date[3:5]] = dict_country_cases
 
-        return dict_country_cases_time, population
+    return dict_country_cases_time, population
 
 
 def filter_data(dict_country_cases_time, population):
@@ -86,7 +86,7 @@ def filter_data(dict_country_cases_time, population):
         deaths.append(deaths_)
         recovered.append(recovered_)
 
-        return confirmed, deaths, recovered
+    return confirmed, deaths, recovered
 
 
 def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
