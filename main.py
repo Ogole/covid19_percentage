@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import csv
 import glob
 
-VERBOSE = False
+VERBOSE = True
 PERCENTAGE_CASES = True
 COUNTRIES = ["World"]
 
@@ -45,6 +45,9 @@ if __name__ == "__main__":
         date = file[-14:-4]
         dict_country_cases_time[date[6:] + "-" + date[:2] + "-" + date[3:5]] = dict_country_cases
 
+    if VERBOSE:
+        print("{:15s} - {:15s}: {:7s} {:7s} {:7s}\n".format("country", "time", "confirmed", "deaths", "recovered"))
+
     time_list = list(dict_country_cases_time.keys())
     time_list.sort()
 
@@ -59,7 +62,10 @@ if __name__ == "__main__":
         for country in COUNTRIES:
             if country in dict_country_cases_time[time]:
                 if VERBOSE:
-                    print(country + " - " + time + ": " + ", ".join(map(str, dict_country_cases_time[time][country])))
+                    print("{:15s} - {:15s}: {:7d} {:7d} {:7d}".format(country, time,
+                                                                      dict_country_cases_time[time][country][0],
+                                                                      dict_country_cases_time[time][country][1],
+                                                                      dict_country_cases_time[time][country][2]))
                 confirmed_ += dict_country_cases_time[time][country][0]
                 deaths_ += dict_country_cases_time[time][country][1]
                 recovered_ += dict_country_cases_time[time][country][2]
