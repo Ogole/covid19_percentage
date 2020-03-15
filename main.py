@@ -5,6 +5,7 @@ import glob
 VERBOSE = True
 PERCENTAGE_CASES = True
 COUNTRIES = ["World"]
+EXPORT = False
 
 if __name__ == "__main__":
     if "China" in COUNTRIES and "Mainland China" not in COUNTRIES:
@@ -93,4 +94,6 @@ if __name__ == "__main__":
     plt.xticks(rotation=90)
     for label in ax.xaxis.get_ticklabels()[::2]:
         label.set_visible(False)
+    if EXPORT:
+        plt.savefig('{}.pdf'.format("_".join(COUNTRIES)), bbox_inches='tight')
     plt.show()
