@@ -4,7 +4,7 @@ import glob
 
 VERBOSE = False
 PERCENTAGE_CASES = True
-COUNTRIES = {"China"}
+COUNTRIES = set()
 EXPORT = False
 
 
@@ -15,10 +15,7 @@ def add_country_synonym(country1, country2):
         COUNTRIES.add(country1)
 
 
-if __name__ == "__main__":
-    add_country_synonym("China", "Mainland China")
-    add_country_synonym("Russia", "Russian Federation")
-
+def get_data():
     population = dict()
     with open("population.csv", newline='\n') as csvfile:
         reader = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -49,6 +46,10 @@ if __name__ == "__main__":
         date = file[-14:-4]
         dict_country_cases_time[date[6:] + "-" + date[:2] + "-" + date[3:5]] = dict_country_cases
 
+        return dict_country_cases_time, population
+
+
+def filter(dict_country_cases_time, population):
     if VERBOSE:
         print("{:15s} - {:15s}: {:7s} {:7s} {:7s}\n".format("country", "time", "confirmed", "deaths", "recovered"))
 
@@ -85,6 +86,10 @@ if __name__ == "__main__":
         deaths.append(deaths_)
         recovered.append(recovered_)
 
+        return confirmed, deaths, recovered
+
+
+def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
     xaxis = list(dict_country_cases_time.keys())
     xaxis.sort()
 
@@ -99,5 +104,24 @@ if __name__ == "__main__":
     for label in ax.xaxis.get_ticklabels()[::2]:
         label.set_visible(False)
     if EXPORT:
-        plt.savefig('{}.pdf'.format("_".join(COUNTRIES)), bbox_inches='tight')
-    plt.show()
+        name = list(COUNTRIES)
+        name.sort()
+        for i in range(len(name)):
+            name[i] = name[i].replace(" ", "-")
+        plt.savefig('{}.pdf'.format("_".join(name)), bbox_inches='tight')
+    # plt.show()
+
+
+def main():
+    add_country_synonym("China", "Mainland China")
+    add_country_synonym("Russia", "Russian Federation")
+
+    dict_country_cases_time, population = get_data()
+
+    confirmed, deaths, recovered = filter(dict_country_cases_time, population)
+
+    draw_graph(dict_country_cases_time, confirmed, deaths, recovered)
+
+
+if __name__ == "__main__":
+    main()
