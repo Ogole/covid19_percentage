@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import csv
 import glob
 
-PERCENTAGE_CASES = False
+PERCENTAGE_CASES = True
 
 country_synonyms = []
 
@@ -119,6 +119,7 @@ def main():
     add_country_synonym("United Kingdom", "UK")
     add_country_synonym("Congo(Kinshasa)", "Congo (Brazzaville)")
     add_country_synonym("Gambia, The", "The Gambia")
+    add_country_synonym("US", "Puerto Rico")
 
     dict_country_cases_time, population = get_data()
 
