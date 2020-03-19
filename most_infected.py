@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import csv
 import glob
 
-PERCENTAGE_CASES = False
+PERCENTAGE_CASES = True
 
 country_synonyms = []
 
@@ -62,7 +62,7 @@ def get_data():
 
 
 def filter_data(dict_country_cases, population):
-    print("{:35s}: {:10s} {:10s} {:10s} {:10s}\n".format("country", "infected", "infected per", "deaths", "recovered"))
+    print("{:35s}: {:>10s} {:>10s} {:>10s} {:>10s} {:>10s}\n".format("country", "infected", "infected %", "deaths", "recovered", "population"))
 
     max_country = ""
     max_infected = 0
@@ -81,11 +81,12 @@ def filter_data(dict_country_cases, population):
         dcc_sorted = {k: v for k, v in sorted(dcc_sorted.items(), key=lambda item: item[1][0], reverse=True)}
 
     for country in dcc_sorted.keys():
-        print("{:35s}: {:10d} {:10f} {:10d} {:10d}".format(country,
+        print("{:35s}: {:10d} {:10f} {:10d} {:10d} {:10d}".format(country,
                                                        dcc_sorted[country][0],
                                                        dcc_sorted[country][1],
                                                        dcc_sorted[country][2],
-                                                       dcc_sorted[country][3]))
+                                                       dcc_sorted[country][3],
+                                                       population[country]))
 
         if PERCENTAGE_CASES:
             if (dcc_sorted[country][1]) > max_infected:
@@ -96,7 +97,7 @@ def filter_data(dict_country_cases, population):
                 max_infected = dcc_sorted[country][0]
                 max_country = country
 
-    print("The country {} has the highest infection rate ({} {}).".format(max_country, max_infected, "per" if PERCENTAGE_CASES else ""))
+    print("\n{} has the highest infection rate ({:3f}{}).".format(max_country, max_infected, "%" if PERCENTAGE_CASES else " cases"))
 
 
 def main():
