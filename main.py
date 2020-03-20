@@ -6,6 +6,7 @@ VERBOSE = True
 PERCENTAGE_CASES = True
 COUNTRIES = {"World"}
 EXPORT = True
+EXPORT_FORMAT = "png"
 
 
 def add_country_synonym(country1, country2):
@@ -97,7 +98,7 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
     xaxis.sort()
 
     fig, ax = plt.subplots()
-    ax.plot(xaxis, confirmed, label='confirmed')
+    ax.plot(xaxis, confirmed, label='currently infected')
     ax.plot(xaxis, deaths, label='deaths')
     ax.plot(xaxis, recovered, label='recovered')
     ax.legend()
@@ -111,7 +112,7 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
         name.sort()
         for i in range(len(name)):
             name[i] = name[i].replace(" ", "-")
-        plt.savefig('{}.pdf'.format("_".join(name)), bbox_inches='tight')
+        plt.savefig('{}.{}'.format("_".join(name), EXPORT_FORMAT), bbox_inches='tight')
     # plt.show()
 
 
