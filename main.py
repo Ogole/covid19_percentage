@@ -7,6 +7,7 @@ PERCENTAGE_CASES = True
 COUNTRIES = {"World"}
 EXPORT = True
 EXPORT_FORMAT = "png"
+SHOW = False
 
 
 def add_country_synonym(country1, country2):
@@ -25,6 +26,21 @@ def get_data():
 
     dict_country_cases_time = dict()
     for file in glob.glob("COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/*.csv"):
+
+        file_date = file.split("/")[-1].split(".")[0]
+        file_date = file_date.split("-")[2] + "-" + file_date.split("-")[0] + "-" + file_date.split("-")[1]
+
+        idx_country_region = 1
+        idx_confirmed = 3
+        idx_deaths = 4
+        idx_recovered = 5
+
+        if file_date >= "2020-03-23":
+            idx_country_region = 3
+            idx_confirmed = 7
+            idx_deaths = 8
+            idx_recovered = 9
+
         with open(file, newline='\n') as csvfile:
             dict_country_cases = dict()
             dict_country_cases["World"] = (0, 0, 0)
@@ -32,17 +48,21 @@ def get_data():
             reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             next(reader)
             for row in reader:
-                if row[1] in dict_country_cases.keys():
-                    dict_country_cases[row[1]] = (dict_country_cases[row[1]][0] + int(row[3] if row[3] else 0),
-                                                  dict_country_cases[row[1]][1] + int(row[4] if row[4] else 0),
-                                                  dict_country_cases[row[1]][2] + int(row[5] if row[5] else 0))
+                if row[idx_country_region] in dict_country_cases.keys():
+                    dict_country_cases[row[idx_country_region]] = (dict_country_cases[row[idx_country_region]][0] +
+                                                                   int(row[idx_confirmed] if row[idx_confirmed] else 0),
+                                                                   dict_country_cases[row[idx_country_region]][1] +
+                                                                   int(row[idx_deaths] if row[idx_deaths] else 0),
+                                                                   dict_country_cases[row[idx_country_region]][2] +
+                                                                   int(row[idx_recovered] if row[idx_recovered] else 0))
                 else:
-                    dict_country_cases[row[1]] = (int(row[3] if row[3] else 0),
-                                                  int(row[4] if row[4] else 0),
-                                                  int(row[5] if row[5] else 0))
-                dict_country_cases["World"] = (dict_country_cases["World"][0] + int(row[3] if row[3] else 0),
-                                               dict_country_cases["World"][1] + int(row[4] if row[4] else 0),
-                                               dict_country_cases["World"][2] + int(row[5] if row[5] else 0))
+                    dict_country_cases[row[idx_country_region]] = (int(row[idx_confirmed] if row[idx_confirmed] else 0),
+                                                                   int(row[idx_deaths] if row[idx_deaths] else 0),
+                                                                   int(row[idx_recovered] if row[idx_recovered] else 0))
+                dict_country_cases["World"] = (
+                dict_country_cases["World"][0] + int(row[idx_confirmed] if row[idx_confirmed] else 0),
+                dict_country_cases["World"][1] + int(row[idx_deaths] if row[idx_deaths] else 0),
+                dict_country_cases["World"][2] + int(row[idx_recovered] if row[idx_recovered] else 0))
 
         date = file[-14:-4]
         dict_country_cases_time[date[6:] + "-" + date[:2] + "-" + date[3:5]] = dict_country_cases
@@ -113,7 +133,8 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
         for i in range(len(name)):
             name[i] = name[i].replace(" ", "-")
         plt.savefig('{}.{}'.format("_".join(name), EXPORT_FORMAT), bbox_inches='tight')
-    # plt.show()
+    if SHOW:
+        plt.show()
 
 
 def main():
@@ -126,6 +147,14 @@ def main():
     add_country_synonym("South Korea", "Korea, South")
     add_country_synonym("China", "Hong Kong SAR")
     add_country_synonym("China", "Hong Kong")
+    add_country_synonym("China", "Macau")
+    add_country_synonym("United Kingdom", "UK")
+    add_country_synonym("Congo(Kinshasa)", "Congo (Brazzaville)")
+    add_country_synonym("Gambia, The", "The Gambia")
+    add_country_synonym("US", "Puerto Rico")
+    add_country_synonym("Bahamas, The", "The Bahamas")
+    add_country_synonym("Bahamas, The", "Bahamas")
+    add_country_synonym("Gambia, The", "Gambia")
 
     dict_country_cases_time, population = get_data()
 
