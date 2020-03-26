@@ -25,7 +25,9 @@ def get_data():
             population[row[0]] = int(row[1])
 
     dict_country_cases_time = dict()
-    for file in glob.glob("COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/*.csv"):
+    files = list(glob.glob("COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/*.csv"))
+    files.sort()
+    for file in files:
 
         file_date = file.split("/")[-1].split(".")[0]
         file_date = file_date.split("-")[2] + "-" + file_date.split("-")[0] + "-" + file_date.split("-")[1]
@@ -35,7 +37,8 @@ def get_data():
         idx_deaths = 4
         idx_recovered = 5
 
-        if file_date >= "2020-03-23":
+        print("{}: {}".format(file_date, file_date >= "2020-03-22"))
+        if file_date >= "2020-03-22":
             idx_country_region = 3
             idx_confirmed = 7
             idx_deaths = 8

@@ -51,7 +51,7 @@ def get_data():
     idx_deaths = 4
     idx_recovered = 5
 
-    if file_date >= "2020-03-23":
+    if file_date >= "2020-03-22":
         idx_country_region = 3
         idx_confirmed = 7
         idx_deaths = 8
@@ -153,6 +153,7 @@ def main():
     add_country_synonym("Bahamas, The", "The Bahamas")
     add_country_synonym("Bahamas, The", "Bahamas")
     add_country_synonym("Gambia, The", "Gambia")
+    add_country_synonym("Others", "Diamond Princess")
 
     dict_country_cases_time, population = get_data()
 
