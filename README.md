@@ -9,16 +9,16 @@ entire world, such as the following graph:
 **most_infected.py** outputs a table of all countries, showing the number of currently infected persons as well as
 numbers of deaths and recovered persons. An example of such a table is shown below:
 
-|country                         |infected|infected %            |deaths|recovered|population|
-|--------------------------------|--------|----------------------|------|---------|----------|
-|Italy                           |42681   |0.070570              |4825  |6072     |60480000  |
-|US                              |25015   |0.007645              |307   |171      |327200000 |
-|Germany                         |21896   |0.026448              |84    |233      |82790000  |
-|Spain                           |21874   |0.046880              |1375  |2125     |46660000  |
-|France                          |13734   |0.020502              |562   |12       |66990000  |
-|Iran                            |11419   |0.014070              |1556  |7635     |81160000  |
-|Korea, South                    |7157    |0.013905              |102   |1540     |51470000  |
-|Switzerland                     |6485    |0.075671              |75    |15       |8570000   |
-|China                           |6189    |0.000447              |3259  |71857    |1386000000|
-|United Kingdom                  |4766    |0.007173              |234   |67       |66440000  |
-|...                             |...     |...                   |...   |...      |...       |
+| country         |  infected | infected % | deaths | recovered | population |
+|-----------------|-----------|------------|--------|-----------|------------|
+|  US             | 64475     | 0.019705   | 942    | 361       | 327200000  |
+|  Italy          | 57521     | 0.095107   | 7503   | 9362      | 60480000   |
+|  Spain          | 40501     | 0.0868     | 3647   | 5367      | 46660000   |
+|  Germany        | 33570     | 0.040548   | 206    | 3547      | 82790000   |
+|  France         | 20360     | 0.030393   | 1333   | 3907      | 66990000   |
+|  Iran           | 15315     | 0.01887    | 2077   | 9625      | 81160000   |
+|  Switzerland    | 10613     | 0.123839   | 153    | 131       | 8570000    |
+|  United Kingdom | 9034      | 0.013597   | 466    | 140       | 66440000   |
+|  Netherlands    | 6077      | 0.035373   | 357    | 4         | 17180000   |
+|  Austria        | 5549      | 0.00629    | 30     | 9         | 88220000   |
+|  ...            | ...       | ...        | ...    | ...       | ...        |
