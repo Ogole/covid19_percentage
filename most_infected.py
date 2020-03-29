@@ -3,6 +3,7 @@ import glob
 
 PERCENTAGE_CASES = False
 EXPORT = True
+VERBOSE = True
 
 country_synonyms = []
 
@@ -83,33 +84,35 @@ def get_data():
 
 
 def filter_data(dict_country_cases, population):
-    with open("most_infected.csv", newline='\n', mode='wt') as output_csv:
-        output_csv_writer = csv.writer(output_csv)
+    if VERBOSE:
         print("    {:35s}: {:>10s} {:>10s} {:>10s} {:>10s} {:>10s}\n".format("country", "infected", "infected %",
                                                                              "deaths", "recovered", "population"))
 
-        if EXPORT:
+    if EXPORT:
+        with open("most_infected.csv", newline='\n', mode='wt') as output_csv:
+            output_csv_writer = csv.writer(output_csv)
             output_csv_writer.writerow(["country", "infected", "infected %", "deaths", "recovered", "population"])
 
-        max_country = ""
-        max_infected = 0
+    max_country = ""
+    max_infected = 0
 
-        dcc_sorted = dict()
+    dcc_sorted = dict()
 
-        for country in dict_country_cases.keys():
-            dcc_sorted[country] = [dict_country_cases[country][0],
-                                   dict_country_cases[country][0] / population[country] * 100
-                                   if population[country] > 0 else 0,
-                                   dict_country_cases[country][1],
-                                   dict_country_cases[country][2]]
+    for country in dict_country_cases.keys():
+        dcc_sorted[country] = [dict_country_cases[country][0],
+                               dict_country_cases[country][0] / population[country] * 100
+                               if population[country] > 0 else 0,
+                               dict_country_cases[country][1],
+                               dict_country_cases[country][2]]
 
-        if PERCENTAGE_CASES:
-            dcc_sorted = {k: v for k, v in sorted(dcc_sorted.items(), key=lambda item: item[1][1], reverse=True)}
-        else:
-            dcc_sorted = {k: v for k, v in sorted(dcc_sorted.items(), key=lambda item: item[1][0], reverse=True)}
+    if PERCENTAGE_CASES:
+        dcc_sorted = {k: v for k, v in sorted(dcc_sorted.items(), key=lambda item: item[1][1], reverse=True)}
+    else:
+        dcc_sorted = {k: v for k, v in sorted(dcc_sorted.items(), key=lambda item: item[1][0], reverse=True)}
 
-        idx = 1
-        for country in dcc_sorted.keys():
+    idx = 1
+    for country in dcc_sorted.keys():
+        if VERBOSE:
             print("{:>3d}. {:35s}: {:10d} {:10f} {:10d} {:10d} {:10d}".format(idx, country,
                                                                               dcc_sorted[country][0],
                                                                               dcc_sorted[country][1],
@@ -117,22 +120,26 @@ def filter_data(dict_country_cases, population):
                                                                               dcc_sorted[country][3],
                                                                               population[country]))
 
-            output_csv_writer.writerow([country, dcc_sorted[country][0], dcc_sorted[country][1],
-                                        dcc_sorted[country][2], dcc_sorted[country][3],
-                                        population[country]])
+        if EXPORT:
+            with open("most_infected.csv", newline='\n', mode='a') as output_csv:
+                output_csv_writer = csv.writer(output_csv)
+                output_csv_writer.writerow([country, dcc_sorted[country][0], dcc_sorted[country][1],
+                                            dcc_sorted[country][2], dcc_sorted[country][3],
+                                            population[country]])
 
-            if PERCENTAGE_CASES:
-                if (dcc_sorted[country][1]) > max_infected:
-                    max_infected = dcc_sorted[country][1]
-                    max_country = country
-            else:
-                if (dcc_sorted[country][0]) > max_infected:
-                    max_infected = dcc_sorted[country][0]
-                    max_country = country
-            idx = idx + 1
+        if PERCENTAGE_CASES:
+            if (dcc_sorted[country][1]) > max_infected:
+                max_infected = dcc_sorted[country][1]
+                max_country = country
+        else:
+            if (dcc_sorted[country][0]) > max_infected:
+                max_infected = dcc_sorted[country][0]
+                max_country = country
+        idx = idx + 1
 
-    print("\n{} has the highest infection rate ({:3f}{}).".format(max_country, max_infected,
-                                                                  "%" if PERCENTAGE_CASES else " cases"))
+    if VERBOSE:
+        print("\n{} has the highest infection rate ({:3f}{}).".format(max_country, max_infected,
+                                                                      "%" if PERCENTAGE_CASES else " cases"))
 
 
 def main():

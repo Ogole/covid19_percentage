@@ -5,7 +5,7 @@ import glob
 VERBOSE = True
 PERCENTAGE_CASES = True
 COUNTRIES = {"World"}
-EXPORT = True
+EXPORT = False
 EXPORT_FORMAT = "png"
 SHOW = False
 
@@ -158,6 +158,7 @@ def main():
     add_country_synonym("Bahamas, The", "The Bahamas")
     add_country_synonym("Bahamas, The", "Bahamas")
     add_country_synonym("Gambia, The", "Gambia")
+    add_country_synonym("Others", "Diamond Princess")
 
     dict_country_cases_time, population = get_data()
 
