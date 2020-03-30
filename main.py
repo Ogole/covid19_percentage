@@ -7,7 +7,7 @@ PERCENTAGE_CASES = True
 COUNTRIES = {"World"}
 EXPORT = False
 EXPORT_FORMAT = "png"
-SHOW = False
+SHOW = True
 
 
 def add_country_synonym(country1, country2):
@@ -121,15 +121,20 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
     xaxis.sort()
 
     fig, ax = plt.subplots()
-    ax.plot(xaxis, confirmed, label='currently infected')
-    ax.plot(xaxis, deaths, label='deaths')
-    ax.plot(xaxis, recovered, label='recovered')
+    ax.plot(xaxis, confirmed, label='currently infected', color='orangered')
+    ax.plot(xaxis, deaths, label='deaths', color='gold')
+    ax.plot(xaxis, recovered, label='recovered', color='cornflowerblue')
     ax.legend()
     plt.title(" + ".join(COUNTRIES))
     plt.ylabel('percentage cases' if PERCENTAGE_CASES else 'total cases')
-    plt.xticks(rotation=90)
-    for label in ax.xaxis.get_ticklabels()[::2]:
-        label.set_visible(False)
+    plt.xticks(rotation=45)
+    plt.grid(color='lightgray', linestyle='-', axis='x')
+    plt.grid(color='lightgray', linestyle='-', axis='y')
+    ax.set_ylim(ymin=0)
+    ax.set_xlim(xmin=min(xaxis), xmax=max(xaxis))
+    for idx in range(len(ax.xaxis.get_ticklabels()))[::-1]:
+        if idx % 7:
+            ax.xaxis.get_ticklabels()[idx].set_visible(False)
     if EXPORT:
         name = list(COUNTRIES)
         name.sort()
