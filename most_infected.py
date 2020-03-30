@@ -1,5 +1,6 @@
 import csv
 import glob
+import fire
 
 PERCENTAGE_CASES = False
 EXPORT = True
@@ -138,8 +139,20 @@ def filter_data(dict_country_cases, population):
         idx = idx + 1
 
     if VERBOSE:
-        print("\n{} has the highest infection rate ({:3f}{}).".format(max_country, max_infected,
-                                                                      "%" if PERCENTAGE_CASES else " cases"))
+        if PERCENTAGE_CASES:
+            print("\n{} has the highest infection rate ({:3f}%).".format(max_country, max_infected))
+        else:
+            print("\n{} has the highest infection rate ({} cases).".format(max_country, max_infected))
+
+
+def parse_args(verbose=True, percentage_cases=True, export=True):
+    global PERCENTAGE_CASES
+    global EXPORT
+    global VERBOSE
+
+    VERBOSE = verbose
+    PERCENTAGE_CASES = percentage_cases
+    EXPORT = export
 
 
 def main():
@@ -162,4 +175,5 @@ def main():
 
 
 if __name__ == "__main__":
+    fire.Fire(parse_args)
     main()
