@@ -1,10 +1,11 @@
 import matplotlib.pyplot as plt
 import csv
 import glob
+import fire
 
 VERBOSE = True
 PERCENTAGE_CASES = True
-COUNTRIES = {"World"}
+COUNTRIES = set()
 EXPORT = True
 EXPORT_FORMAT = "png"
 SHOW = False
@@ -191,5 +192,22 @@ def main():
     draw_graph(dict_country_cases_time, confirmed, deaths, recovered)
 
 
+def parse_args(country='World', verbose=True, percentage_cases=True, export=True, export_format='png', show=False):
+    global VERBOSE
+    global PERCENTAGE_CASES
+    global COUNTRIES
+    global EXPORT
+    global EXPORT_FORMAT
+    global SHOW
+
+    VERBOSE = verbose
+    PERCENTAGE_CASES = percentage_cases
+    COUNTRIES.add(country)
+    EXPORT = export
+    EXPORT_FORMAT = export_format
+    SHOW = show
+
+
 if __name__ == "__main__":
+    fire.Fire(parse_args)
     main()
