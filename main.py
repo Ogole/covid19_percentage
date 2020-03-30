@@ -5,16 +5,18 @@ import glob
 VERBOSE = True
 PERCENTAGE_CASES = True
 COUNTRIES = {"World"}
-EXPORT = False
+EXPORT = True
 EXPORT_FORMAT = "png"
-SHOW = True
+SHOW = False
+
+country_synonyms = dict()
 
 
-def add_country_synonym(country1, country2):
-    if country1 in COUNTRIES:
-        COUNTRIES.add(country2)
-    if country2 in COUNTRIES:
-        COUNTRIES.add(country1)
+def add_country_synonym(country_a, country_b):
+    if country_a in country_synonyms.keys():
+        country_synonyms[country_a].append(country_b)
+    else:
+        country_synonyms[country_a] = [country_b]
 
 
 def get_data():
@@ -28,7 +30,6 @@ def get_data():
     files = list(glob.glob("COVID-19/csse_covid_19_data/csse_covid_19_daily_reports/*.csv"))
     files.sort()
     for file in files:
-
         file_date = file.split("/")[-1].split(".")[0]
         file_date = file_date.split("-")[2] + "-" + file_date.split("-")[0] + "-" + file_date.split("-")[1]
 
@@ -37,7 +38,6 @@ def get_data():
         idx_deaths = 4
         idx_recovered = 5
 
-        print("{}: {}".format(file_date, file_date >= "2020-03-22"))
         if file_date >= "2020-03-22":
             idx_country_region = 3
             idx_confirmed = 7
@@ -51,21 +51,31 @@ def get_data():
             reader = csv.reader(csvfile, delimiter=',', quotechar='"')
             next(reader)
             for row in reader:
-                if row[idx_country_region] in dict_country_cases.keys():
-                    dict_country_cases[row[idx_country_region]] = (dict_country_cases[row[idx_country_region]][0] +
-                                                                   int(row[idx_confirmed] if row[idx_confirmed] else 0),
-                                                                   dict_country_cases[row[idx_country_region]][1] +
-                                                                   int(row[idx_deaths] if row[idx_deaths] else 0),
-                                                                   dict_country_cases[row[idx_country_region]][2] +
-                                                                   int(row[idx_recovered] if row[idx_recovered] else 0))
+                country_ = row[idx_country_region]
+
+                for country in country_synonyms.keys():
+                    if country_ in country_synonyms[country]:
+                        country_ = country
+                        break
+
+                if country_ in dict_country_cases.keys():
+                    dict_country_cases[country_] = (dict_country_cases[country_][0] +
+                                                    int(row[idx_confirmed] if row[idx_confirmed] else 0),
+                                                    dict_country_cases[country_][1] +
+                                                    int(row[idx_deaths] if row[idx_deaths] else 0),
+                                                    dict_country_cases[country_][2] +
+                                                    int(row[idx_recovered] if row[idx_recovered] else 0))
                 else:
-                    dict_country_cases[row[idx_country_region]] = (int(row[idx_confirmed] if row[idx_confirmed] else 0),
-                                                                   int(row[idx_deaths] if row[idx_deaths] else 0),
-                                                                   int(row[idx_recovered] if row[idx_recovered] else 0))
+                    dict_country_cases[country_] = (int(row[idx_confirmed] if row[idx_confirmed] else 0),
+                                                    int(row[idx_deaths] if row[idx_deaths] else 0),
+                                                    int(row[idx_recovered] if row[idx_recovered] else 0))
                 dict_country_cases["World"] = (
-                dict_country_cases["World"][0] + int(row[idx_confirmed] if row[idx_confirmed] else 0),
-                dict_country_cases["World"][1] + int(row[idx_deaths] if row[idx_deaths] else 0),
-                dict_country_cases["World"][2] + int(row[idx_recovered] if row[idx_recovered] else 0))
+                                                dict_country_cases["World"][0] + int(row[idx_confirmed]
+                                                                                     if row[idx_confirmed] else 0),
+                                                dict_country_cases["World"][1] + int(row[idx_deaths]
+                                                                                     if row[idx_deaths] else 0),
+                                                dict_country_cases["World"][2] + int(row[idx_recovered]
+                                                                                     if row[idx_recovered] else 0))
 
         date = file[-14:-4]
         dict_country_cases_time[date[6:] + "-" + date[:2] + "-" + date[3:5]] = dict_country_cases
@@ -89,22 +99,37 @@ def filter_data(dict_country_cases_time, population):
         deaths_ = 0
         recovered_ = 0
         for country in COUNTRIES:
-            if country in dict_country_cases_time[time]:
+            country_ = country
+            for c in country_synonyms.keys():
+                if country_ in country_synonyms[c]:
+                    country_ = c
+                    break
+
+            if country_ in dict_country_cases_time[time]:
                 if VERBOSE:
-                    print("{:15s} - {:15s}: {:7d} {:7d} {:7d}".format(country, time,
-                                                                      dict_country_cases_time[time][country][0],
-                                                                      dict_country_cases_time[time][country][1],
-                                                                      dict_country_cases_time[time][country][2]))
-                confirmed_ += dict_country_cases_time[time][country][0]
-                deaths_ += dict_country_cases_time[time][country][1]
-                recovered_ += dict_country_cases_time[time][country][2]
+                    print("{:15s} - {:15s}: {:7d} {:7d} {:7d}".format(country_, time,
+                                                                      dict_country_cases_time[time][country_][0],
+                                                                      dict_country_cases_time[time][country_][1],
+                                                                      dict_country_cases_time[time][country_][2]))
+                confirmed_ += dict_country_cases_time[time][country_][0]
+                deaths_ += dict_country_cases_time[time][country_][1]
+                recovered_ += dict_country_cases_time[time][country_][2]
 
         confirmed_ -= (deaths_ + recovered_)
 
         if PERCENTAGE_CASES:
             population_ = 0
             for country in COUNTRIES:
-                population_ += population[country]
+                found = False
+                for c in country_synonyms.keys():
+                    if country in country_synonyms[c]:
+                        country_ = c
+                        found = True
+                        break
+                if not found:
+                    country_ = country
+
+                population_ += population[country_]
             confirmed_ = confirmed_ / population_ * 100
             deaths_ = deaths_ / population_ * 100
             recovered_ = recovered_ / population_ * 100
@@ -146,29 +171,23 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
 
 
 def main():
-    add_country_synonym("China", "Mainland China")
-    add_country_synonym("Russia", "Russian Federation")
-    add_country_synonym("Taiwan", "Taiwan*")
-    add_country_synonym("Taiwan", "Taipei and environs")
-    add_country_synonym("Iran", "Iran (Islamic Republic of)")
-    add_country_synonym("South Korea", "Republic of Korea")
+    add_country_synonym("DR Congo", "Congo (Kinshasa)")
+    add_country_synonym("United States", "US")
+    add_country_synonym("Congo", "Congo (Brazzaville)")
+    add_country_synonym("Côte d'Ivoire", "Cote d'Ivoire")
+    add_country_synonym("Czech Republic (Czechia)", "Czechia")
+    add_country_synonym("Other", "Diamond Princess")
     add_country_synonym("South Korea", "Korea, South")
-    add_country_synonym("China", "Hong Kong SAR")
-    add_country_synonym("China", "Hong Kong")
-    add_country_synonym("China", "Macau")
-    add_country_synonym("United Kingdom", "UK")
-    add_country_synonym("Congo(Kinshasa)", "Congo (Brazzaville)")
-    add_country_synonym("Gambia, The", "The Gambia")
-    add_country_synonym("US", "Puerto Rico")
-    add_country_synonym("Bahamas, The", "The Bahamas")
-    add_country_synonym("Bahamas, The", "Bahamas")
-    add_country_synonym("Gambia, The", "Gambia")
-    add_country_synonym("Others", "Diamond Princess")
+    add_country_synonym("Other", "MS Zaandam")
+    add_country_synonym("Saint Kitts & Nevis", "Saint Kitts and Nevis")
+    add_country_synonym("St. Vincent & Grenadines", "Saint Vincent and the Grenadines")
+    add_country_synonym("Taiwan", "Taiwan*")
+    add_country_synonym("Palestinian territories", "West Bank and Gaza")
+    add_country_synonym("China", "Mainland China")
+    add_country_synonym("United States", "US")
 
     dict_country_cases_time, population = get_data()
-
     confirmed, deaths, recovered = filter_data(dict_country_cases_time, population)
-
     draw_graph(dict_country_cases_time, confirmed, deaths, recovered)
 
 
