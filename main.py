@@ -186,6 +186,7 @@ def main():
     add_country_synonym("Palestinian territories", "West Bank and Gaza")
     add_country_synonym("China", "Mainland China")
     add_country_synonym("United States", "US")
+    add_country_synonym("South Korea", "Republic of Korea")
 
     dict_country_cases_time, population = get_data()
     confirmed, deaths, recovered = filter_data(dict_country_cases_time, population)

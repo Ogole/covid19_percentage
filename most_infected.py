@@ -168,6 +168,7 @@ def main():
     add_country_synonym("St. Vincent & Grenadines", "Saint Vincent and the Grenadines")
     add_country_synonym("Taiwan", "Taiwan*")
     add_country_synonym("Palestinian territories", "West Bank and Gaza")
+    add_country_synonym("South Korea", "Republic of Korea")
 
     dict_country_cases_time, population = get_data()
 
