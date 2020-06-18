@@ -86,16 +86,16 @@ def get_data():
 
 def filter_data(dict_country_cases, population):
     if VERBOSE:
-        print("    {:35s}: {:>10s} {:>10s} {:>10s} {:>10s} {:>10s} {:>10s}\n".format("country", "infected",
-                                                                                     "infected %", "deaths",
+        print("    {:35s}: {:>10s} {:>10s} {:>10s} {:>10s} {:>10s} {:>10s} {:>10s}\n".format("country", "infected",
+                                                                                     "infected %", "deaths", "deaths %",
                                                                                      "recovered", "recovered %",
                                                                                      "population"))
 
     if EXPORT:
         with open("most_infected.csv", newline='\n', mode='wt') as output_csv:
             output_csv_writer = csv.writer(output_csv)
-            output_csv_writer.writerow(["country", "infected", "infected %", "deaths", "recovered", "recovered %",
-                                        "population"])
+            output_csv_writer.writerow(["country", "infected", "infected %", "deaths", "deaths %", "recovered",
+                                        "recovered %", "population"])
 
     dcc_sorted = dict()
 
@@ -104,6 +104,10 @@ def filter_data(dict_country_cases, population):
                                dict_country_cases[country][0] / population[country] * 100
                                if population[country] > 0 else 0,
                                dict_country_cases[country][1],
+                               dict_country_cases[country][1] / (dict_country_cases[country][0] +
+                                                                 dict_country_cases[country][1] +
+                                                                 dict_country_cases[country][2]) * 100
+                               if dict_country_cases[country][0] > 0 else 0,
                                dict_country_cases[country][2],
                                (dict_country_cases[country][2] / population[country] * 100)
                                if population[country] > 0 else 0,
@@ -114,13 +118,14 @@ def filter_data(dict_country_cases, population):
     idx = 1
     for country in dcc_sorted.keys():
         if VERBOSE:
-            print("{:>3d}. {:35s}: {:10d} {:10f} {:10d} {:10d} {:.6f} {:10d}".format(idx, country,
+            print("{:>3d}. {:35s}: {:10d} {:10f} {:10d} {:10f} {:10d} {:10f} {:10d}".format(idx, country,
                                                                                      dcc_sorted[country][0],
                                                                                      dcc_sorted[country][1],
                                                                                      dcc_sorted[country][2],
                                                                                      dcc_sorted[country][3],
                                                                                      dcc_sorted[country][4],
-                                                                                     dcc_sorted[country][5]))
+                                                                                     dcc_sorted[country][5],
+                                                                                     dcc_sorted[country][6]))
 
         if EXPORT:
             with open("most_infected.csv", newline='\n', mode='a') as output_csv:
