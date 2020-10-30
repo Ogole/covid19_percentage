@@ -61,21 +61,21 @@ def get_data():
 
                 if country_ in dict_country_cases.keys():
                     dict_country_cases[country_] = (dict_country_cases[country_][0] +
-                                                    int(row[idx_confirmed] if row[idx_confirmed] else 0),
+                                                    int(float(row[idx_confirmed]) if row[idx_confirmed] else 0),
                                                     dict_country_cases[country_][1] +
-                                                    int(row[idx_deaths] if row[idx_deaths] else 0),
+                                                    int(float(row[idx_deaths]) if row[idx_deaths] else 0),
                                                     dict_country_cases[country_][2] +
-                                                    int(row[idx_recovered] if row[idx_recovered] else 0))
+                                                    int(float(row[idx_recovered]) if row[idx_recovered] else 0))
                 else:
-                    dict_country_cases[country_] = (int(row[idx_confirmed] if row[idx_confirmed] else 0),
-                                                    int(row[idx_deaths] if row[idx_deaths] else 0),
-                                                    int(row[idx_recovered] if row[idx_recovered] else 0))
+                    dict_country_cases[country_] = (int(float(row[idx_confirmed]) if row[idx_confirmed] else 0),
+                                                    int(float(row[idx_deaths]) if row[idx_deaths] else 0),
+                                                    int(float(row[idx_recovered]) if row[idx_recovered] else 0))
                 dict_country_cases["World"] = (
-                                                dict_country_cases["World"][0] + int(row[idx_confirmed]
+                                                dict_country_cases["World"][0] + int(float(row[idx_confirmed])
                                                                                      if row[idx_confirmed] else 0),
-                                                dict_country_cases["World"][1] + int(row[idx_deaths]
+                                                dict_country_cases["World"][1] + int(float(row[idx_deaths])
                                                                                      if row[idx_deaths] else 0),
-                                                dict_country_cases["World"][2] + int(row[idx_recovered]
+                                                dict_country_cases["World"][2] + int(float(row[idx_recovered])
                                                                                      if row[idx_recovered] else 0))
 
         date = file[-14:-4]
@@ -159,7 +159,7 @@ def draw_graph(dict_country_cases_time, confirmed, deaths, recovered):
     ax.set_ylim(ymin=0)
     ax.set_xlim(xmin=min(xaxis), xmax=max(xaxis))
     for idx in range(len(ax.xaxis.get_ticklabels()))[::-1]:
-        if idx % 7:
+        if idx % 15:
             ax.xaxis.get_ticklabels()[idx].set_visible(False)
     if EXPORT:
         name = list(COUNTRIES)
